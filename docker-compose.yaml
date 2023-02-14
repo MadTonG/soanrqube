@@ -1,0 +1,58 @@
+version: "3.4"
+services:
+
+  sonar:
+    image: slzlzxlz/sonar:lts-community
+    container_name: sonar-srv
+    depends_on:
+      - postgres
+    environment:
+      - TZ=Aia/Shanghai
+      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+      - SONARQUBE_JDBC_USERNAME=sonar
+      - SONARQUBE_JDBC_PASSWORD=passwd
+      - SONARQUBE_JDBC_URL=jdbc:postgresql://postgres:5432/sonar
+    ports:
+      - 9000:9000
+    volumes:
+      - home_data:/opt/sonarqube
+    command:
+      # 内存设置
+      - -Dsonar.ce.javaOpts=-Xmx2048m
+      - -Dsonar.web.javaOpts=-Xmx2048m
+      # 设置服务代理路径
+      - -Dsonar.web.context=/
+      # 集成gitlab回调地址设置
+      - -Dsonar.core.serverBaseURL=https://sonarqube.example.com
+    restart: always
+    networks:
+      - sonar-network
+
+    postgres:
+      image: postgres:12
+      container_name: postgres-sonar
+      environment:
+        - TZ=Aia/Shanghai
+        - POSTGRES_USER=sonar
+        - POSTGRES_PASSWORD=passwd
+        - POSTGRES_DB=sonar
+      ports:
+        - 5432:5432
+      volumes:
+        - postgres_data:/var/lib/postgresql/data
+      restart: always
+      networks:
+        -sonar-network
+
+
+volumes:
+  home_data:
+    external: false
+  postgres_data:
+    external: false
+
+
+networks:
+  sonar-network:
+    driver: bridge
+    
