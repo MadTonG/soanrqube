@@ -1,2 +1,2 @@
-# soanrqube
-SoanrQube lts-community
+# SonarQube
+SonarQube lts-community
