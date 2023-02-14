@@ -1,11 +1,12 @@
 name: Publish Docker image   # workflow名称，可以在Github项目主页的【Actions】中看到所有的workflow
 
 on:   # 配置触发workflow的事件
-  push:
+  workflow_dispatch:
+#   push:
 #     branches:   # master分支有push时触发此workflow
 #       - 'main'
-    tags:       # tag更新时触发此workflow
-      - '*'
+#     tags:       # tag更新时触发此workflow
+#       - '*'
 
 jobs:  # workflow中的job
 
@@ -18,7 +19,7 @@ jobs:  # workflow中的job
         uses: actions/checkout@v3   # 官方的action，获取代码
 
       - name: Log in to Docker Hub
-        uses: docker/login-action@v2.1.0  # 三方的action操作， 执行docker login
+        uses: docker/login-action@v2  # 三方的action操作， 执行docker login
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}  # 配置dockerhub的认证，在Github项目主页 【Settings】 -> 【Secrets】 添加对应变量
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -34,5 +35,6 @@ jobs:  # workflow中的job
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+#           tags: ${{ steps.meta.outputs.tags }}
+          tags: lts-community
           labels: ${{ steps.meta.outputs.labels }}
